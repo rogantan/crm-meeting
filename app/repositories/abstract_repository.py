@@ -17,6 +17,11 @@ class AbstractRepository:
     result = await self.session.execute(query)
     return result.scalars().one_or_none()
 
+  async def get_for_update(self, model_id: int | str):
+    query = select(self.model).where(self.model.id == model_id).with_for_update()
+    result = await self.session.execute(query)
+    return result.scalars().one_or_none()
+
   async def insert(self, **data: Dict):
     query = insert(self.model).values(**data)
     result = await self.session.execute(query.returning(self.model))
