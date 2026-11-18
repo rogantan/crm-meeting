@@ -7,4 +7,5 @@ class Company(Base):
   id: Mapped[int] = mapped_column(Integer, primary_key=True)
   name: Mapped[str] = mapped_column(String(255), nullable=False)
   bin: Mapped[str] = mapped_column(String(12), unique=True, nullable=False)
+  phone: Mapped[str] = mapped_column(String(32), nullable=False)
   status: Mapped[CompanyStatus] = mapped_column(Enum(CompanyStatus), default="new", nullable=False)
