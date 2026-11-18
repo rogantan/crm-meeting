@@ -1,0 +1,80 @@
+@base = http://localhost:14325
+
+### Организация
+POST {{base}}/companies
+Content-Type: application/json
+
+{
+  "name": "Алматы Трейд Компани",
+  "bin": "170340021554",
+  "phone": "+77011234567"
+}
+
+### Список новых организаций
+GET {{base}}/companies?status=new&page=1&size=20
+
+### Менеджер
+POST {{base}}/managers
+Content-Type: application/json
+
+{
+  "name": "Айгуль"
+}
+
+### Встреча в понедельник 10:00 Asia/Almaty (05:00 UTC)
+POST {{base}}/meetings
+Content-Type: application/json
+
+{
+  "company_id": 1,
+  "manager_id": 1,
+  "start_time": "2026-11-16T05:00:00Z"
+}
+
+### Слишком поздно: 17:30 Asia/Almaty не умещается до 18:00
+POST {{base}}/meetings
+Content-Type: application/json
+
+{
+  "company_id": 1,
+  "manager_id": 1,
+  "start_time": "2026-11-16T12:30:00Z"
+}
+
+### Звонок без встречи — ошибка
+POST {{base}}/calls
+Content-Type: application/json
+
+{
+  "company_id": 1,
+  "result": "meeting_set"
+}
+
+### Звонок со встречей
+POST {{base}}/calls
+Content-Type: application/json
+
+{
+  "company_id": 1,
+  "result": "meeting_set",
+  "meeting_id": 1
+}
+
+### Перенос. Исходное время остаётся в original_scheduled_at
+PATCH {{base}}/meetings/1
+Content-Type: application/json
+
+{
+  "start_time": "2026-11-16T07:00:00Z"
+}
+
+### Отмена
+PATCH {{base}}/meetings/1
+Content-Type: application/json
+
+{
+  "status": "cancelled"
+}
+
+### Расписание менеджера на день Asia/Almaty
+GET {{base}}/managers/1/schedule?date=2026-11-16
