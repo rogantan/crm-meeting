@@ -1,3 +1,5 @@
+name: crm-meeting
+
 services:
   app:
     container_name: crm_backend
@@ -5,11 +7,15 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: always
-    command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: sh -c "poetry run alembic -c app/alembic.ini upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     env_file:
       - ../.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
     ports:
       - "14325:8000"
 
@@ -18,10 +24,15 @@ services:
     restart: always
     env_file:
       - ../.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crm -d crm"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
 
 volumes:
