@@ -4,7 +4,7 @@ from app.schemas.company import CompanyCreate
 from app.api.dependencies import get_company_service
 from app.services.company_service import CompanyService
 
-router = APIRouter("/companies", tags=["Companies"])
+router = APIRouter(prefix="/companies", tags=["Companies"])
 
 @router.post("")
 async def create_company(data: CompanyCreate, company_service: CompanyService = Depends(get_company_service)):
